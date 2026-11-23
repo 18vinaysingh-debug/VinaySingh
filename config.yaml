@@ -1,0 +1,87 @@
+# ============================================================
+#  AI CONTENT FACTORY  -  channel + pipeline settings
+#  Edit this file, not the code.
+# ============================================================
+
+channel:
+  name: "Your Page Name"     # <- change to your page name
+  language: "Hindi-Hinglish"
+  niches: ["mystery", "fascinating facts", "storytelling", "comedy", "entertainment", "relatable skits"]
+  audience: "Indian viewers aged 18-35, watch on mobile, love a good story and a good laugh"
+  voice_style: "Story videos: gripping, confident narrator. Skits: warm, desi, everyday humour - laugh WITH people, never AT a group"
+  brand_rules:
+    - "Every video gives original narration, context or analysis - no repackaging of other creators"
+    - "Hook must be honest: the video must deliver what the first line promises"
+    - "Never invent sources, statistics, quotes or events"
+    - "Say 'scientists think' or 'one theory says' when something is not proven"
+    - "No medical, financial or legal advice"
+    - "Comedy never punches down: no caste, religion, region, gender, body or disability jokes"
+    - "Learn patterns from top creators, never copy their jokes, scripts, characters or footage"
+
+daily:
+  formats:                   # new videos started each day, per format
+    story: 1                 # mystery / fascinating facts / storytelling (fully automatic)
+    skit: 1                  # comedy / relatable skit (auto-rendered with 2 voices + a SHOOT_PLAN if you want to act it)
+  candidate_topics: 10       # topics the Trend agent proposes
+  short_duration_sec: [35, 58]
+
+# Topic score = weighted sum of the 1-10 scores the Trend agent gives.
+# These are prioritisation signals, not predictions of virality.
+topic_weights:
+  demand: 0.30
+  originality: 0.20
+  relevance: 0.20
+  competition_gap: 0.15
+  evergreen: 0.15
+
+panels:                      # expert-panel review by the specialist roster (roster.yaml)
+  enabled: true
+  pass_score: 7.5            # below this, the script is rewritten with the panel's fixes
+  max_rounds: 1              # rewrites per script (each round = 2 Gemini calls)
+  max_members: 14
+
+creators:                    # top pages to LEARN PATTERNS from (YouTube handles). Fill these in!
+  story: []                  # e.g. ["@SomeMysteryChannel", "@SomeFactsChannel"]
+  skit: []                   # e.g. ["@SomeComedyChannel"]
+  refresh_days: 7
+
+models:
+  provider: gemini           # gemini | mock (mock = offline test run, no API)
+  fast: gemini-2.5-flash     # trend, script, distribution
+  smart: gemini-2.5-pro      # research, fact-check, QC (switch to flash if you hit limits)
+  temperature_creative: 0.9
+  temperature_strict: 0.2
+
+tts:
+  provider: edge             # edge (free Microsoft voices) | gemini | mock
+  edge_voice: hi-IN-MadhurNeural   # narrator
+  edge_voice_male: hi-IN-MadhurNeural
+  edge_voice_female: hi-IN-SwaraNeural
+  edge_rate: "+8%"
+  gemini_model: gemini-2.5-flash-preview-tts
+  gemini_voice: Charon       # narrator
+  gemini_voice_male: Puck
+  gemini_voice_female: Kore
+
+visuals:
+  use_pexels: true           # free licensed stock video (needs PEXELS_API_KEY)
+  # Your own clips (e.g. made with Veo / Flow in your Gemini subscription) always win:
+  # drop them as jobs/<JOB_ID>/clips/scene_1.mp4, scene_2.mp4 ... then run:  python run.py rerender <JOB_ID>
+
+video:
+  width: 1080
+  height: 1920
+  fps: 30
+  caption_font: "Arial"      # captions are Roman Hinglish
+  caption_size: 82
+  music_file: ""             # optional: path to a track you have rights to (e.g. YouTube Audio Library)
+  music_volume: 0.10
+  owner_clip_audio: true     # if you film a scene yourself, use your own voice from that clip
+
+limits:
+  max_retries: 2             # per job, across revision loops
+
+publishing:
+  require_approval: true     # keep true until the pipeline has proven itself
+  youtube_privacy: private   # private | unlisted | public  (upload stays private until you flip it)
+  youtube_category_id: "28"  # Science & Technology
